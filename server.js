@@ -1,10 +1,11 @@
 var PORT = process.env.PORT || 9002;
 
-var express = require('express')
+var extend = require('extend');
+var express = require('express');
 var app = express();
 
-var Datastore = require('nedb')
-  , db = new Datastore({ filename: __dirname + '/data/db', autoload: true });
+var Datastore = require('nedb');
+var db = new Datastore({ filename: __dirname + '/data/db', autoload: true });
 
 
 app.use(express.json());
@@ -18,11 +19,16 @@ app.get('/id', function(req, res){
 app.post('/save', function(req, res) {
   db.findOne({testId: req.body.testId}, function(err, doc){
     if (doc) {
-      db.update({testId: req.body.testId}, extend(doc, req.body))
+      db.update({testId: req.body.testId}, extend(true, doc, req.body))
     } else {
       db.insert(req.body);
     }
   });
+  res.send(200);
+});
+
+app.post('/end', function(req, res) {
+  // Kill req.body.workerId
   res.send(200);
 });
 
@@ -49,12 +55,3 @@ function guid () {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
          s4() + '-' + s4() + s4() + s4();
 }
-
-function extend (dest, source) {
-  for(var key in source) {
-    if(source.hasOwnProperty(key)) {
-      dest[key] = source[key];
-    }
-  }
-  return dest;
-};

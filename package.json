@@ -17,8 +17,9 @@
   },
   "homepage": "https://github.com/peers/peerjs-test",
   "dependencies": {
-    "browserstack-webdriver": "^2.41.1",
     "express": "^3.5.1",
-    "nedb": "^0.10.5"
+    "nedb": "^0.10.5",
+    "browserstack": "^1.0.1",
+    "extend": "^1.2.1"
   }
 }
