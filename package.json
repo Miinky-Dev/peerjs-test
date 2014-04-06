@@ -1,0 +1,24 @@
+{
+  "name": "peerjs-test",
+  "version": "0.0.0",
+  "description": "Automated browser testing for PeerJS",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/peers/peerjs-test.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/peers/peerjs-test/issues"
+  },
+  "homepage": "https://github.com/peers/peerjs-test",
+  "dependencies": {
+    "browserstack-webdriver": "^2.41.1",
+    "express": "^3.5.1",
+    "nedb": "^0.10.5"
+  }
+}
