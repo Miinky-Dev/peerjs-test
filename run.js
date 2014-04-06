@@ -3,8 +3,8 @@ var webdriver = require('browserstack-webdriver');
 // Input capabilities
 var capabilities = {
   'browserName' : 'firefox',
-  'browserstack.user' : 'ericzhang4',
-  'browserstack.key' : 'VXkpz7bCJPemzMph7kFi'
+  'browserstack.user' : process.env.BROWSERSTACK_USER
+  'browserstack.key' : process.env.BROWSERSTACK_KEY
 }
 
 var driver = new webdriver.Builder().
