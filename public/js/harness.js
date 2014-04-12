@@ -1,7 +1,7 @@
 var CDN = 'http://cdn.peerjs.com';
 var FILE = 'peer.js';
 
-var FULL_TEST_TIMEOUT = 10000;
+var FULL_TEST_TIMEOUT = 30000;
 
 function loadScript(v, cb) {
   if (!cb) {

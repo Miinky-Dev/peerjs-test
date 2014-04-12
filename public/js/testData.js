@@ -7,7 +7,7 @@ function testDataClient(cb) {
 
   var testTimeout = setTimeout(function(){
     cb(null, false);
-  }, 10000);
+  }, 25000);
 
   var conn = peer.connect(TEST_ID + '-host');
   conn.on('data', function(data){
