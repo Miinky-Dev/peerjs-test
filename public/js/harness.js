@@ -1,7 +1,7 @@
 var logData = [];
 console.log = function(){
   args = Array.prototype.slice.call(arguments, 0);
-  logData.push(args.join(' '));
+  logData.push(Date.now() + ' ' + args.join(' '));
 };
 
 var CDN = 'http://cdn.peerjs.com';
