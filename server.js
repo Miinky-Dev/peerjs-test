@@ -74,9 +74,10 @@ var WORKER_CBS = {};
 var WORKER_TIMEOUTS = {};
 
 function startMirror() {
-  async.eachLimit(BROWSERS, 1, function(browser, eachCb){
-    var clientBrowser = serverBrowser = browser;
-    db.data.findOne({'client.setting': clientBrowser, 'host.setting': serverBrowser}, function(err, data) {
+  async.each(BROWSERS, 1, function(browser, eachCb){
+    var clientBrowser browser.client;
+    var hostBrowser = browser.host;
+    db.data.findOne({'client.setting': clientBrowser, 'host.setting': hostBrowser}, function(err, data) {
       if (data) {
         return eachCb();
       } else {
@@ -88,13 +89,13 @@ function startMirror() {
           var clientId = guid();
           var clientSetting = generateWorkerSettings(clientBrowser, testId, 'client', clientId);
           var hostId = guid();
-          var hostSetting = generateWorkerSettings(serverBrowser, testId, 'host', hostId);
+          var hostSetting = generateWorkerSettings(hostBrowser, testId, 'host', hostId);
 
-          console.log('====== Starting new test:', JSON.stringify(browser));
+          console.log('====== Starting new test:', browserString(clientBrowser), 'connecting to', browserString(hostBrowser));
           db.data.insert({
             testId: testId,
             client: {setting: clientBrowser},
-            host: {setting: serverBrowser}
+            host: {setting: hostBrowser}
           });
 
           async.parallel([
@@ -124,7 +125,7 @@ function startMirror() {
               }
             }, function(){
               // Test is done!
-              console.log('========== Finished test:', JSON.stringify(browser));
+              console.log('========== Finished test:', browserString(clientBrowser), 'connecting to', browserString(hostBrowser));
               eachCb();
             });
           });
@@ -160,6 +161,10 @@ function generateWorkerSettings(browser, testId, role, workerId) {
   setting = extend(true, {}, browser);
   setting.url = URL + '/static/test.html?TEST_ID=' + testId + '&ROLE=' + role + '&WORKER_ID=' + workerId;
   return setting;
+}
+
+function browserString(browser) {
+  return browser.os + ' ' + browser.browser + ' ' + browser.browser_version;
 }
 
 
