@@ -102,7 +102,9 @@ function startMirror() {
               Runner.start(hostSetting, pCb);
             },
             function(pCb){
-              Runner.start(clientSetting, pCb);
+              setTimeout(function(){
+                Runner.start(clientSetting, pCb);
+              }, 1000);
             }
           ], function(err, results) {
             if (err) {
