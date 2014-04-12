@@ -62,13 +62,7 @@ app.listen(PORT);
 // Start tests
 
 // Browsers to test
-var BROWSERS = [
-  //{"os":"Windows","os_version":"8.1","browser":"chrome","device":null,"browser_version":"23.0"},
-  {"os":"Windows","os_version":"8.1","browser":"chrome","device":null,"browser_version":"27.0"},
-  //{"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"22.0"},
-  //{"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"24.0"},
-  //{"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"27.0"}
-];
+var BROWSERS = JSON.parse(require('fs').readFileSync('browsers.json').toString());
 
 var URL = 'http://peerjs.com:9002'
 
