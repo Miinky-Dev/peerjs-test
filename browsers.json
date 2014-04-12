@@ -9,5 +9,6 @@
   {"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"24.0"},
   {"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"25.0"},
   {"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"26.0"},
-  {"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"27.0"}
+  {"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"27.0"},
+  {"os":"OS X","device":null,"os_version":"Lion","browser":"opera","browser_version":"20.0"}
 ]
