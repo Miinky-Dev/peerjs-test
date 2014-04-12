@@ -1,5 +1,20 @@
 // Util
+
+// POST queue
+var q = async.queue(function (task, callback) {
+  _post(task.url, task.data, function(arg1, arg2){
+    if (task.cb) {
+      task.cb(arg1, arg2);
+    }
+    callback();
+  });
+}, 1);
+
 function post (url, data, cb) {
+  q.push({url: url, data: data, cb: cb});
+}
+
+function _post (url, data, cb) {
   var oReq = new XMLHttpRequest();
   oReq.onload = function(){
     var data;
