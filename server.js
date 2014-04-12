@@ -30,6 +30,7 @@ app.post('/end', function(req, res) {
   var workerId = req.body.workerId;
   console.log('Got end request for', workerId);
   var id = WORKER_IDS[workerId];
+  clearTimeout(WORKER_TIMEOUTS[workerId]);
   if (id) {
     Runner.kill(id);
     var cb = WORKER_CBS[workerId];
@@ -75,6 +76,8 @@ var URL = 'http://peerjs.com:9002'
 var WORKER_IDS = {};
 // Callbacks to be called when workers end
 var WORKER_CBS = {};
+// Timeouts for killing workers
+var WORKER_TIMEOUTS = {};
 
 function startMirror() {
   async.eachLimit(BROWSERS, 1, function(browser, eachCb){
@@ -116,9 +119,11 @@ function startMirror() {
             async.parallel({
               client: function(endCb) {
                 WORKER_CBS[clientId] = endCb;
+                WORKER_TIMEOUTS[clientId] = setTimeout(timeout(clientId), 12000);
               },
               host: function(endCb){
                 WORKER_CBS[hostId] = endCb;
+                WORKER_TIMEOUTS[hostId] = setTimeout(timeout(hostId), 12000);
               }
             }, function(){
               // Test is done!
@@ -136,6 +141,22 @@ function startMirror() {
       console.log('TESTS DONE');
     }
   });
+}
+
+function timeout(workerId) {
+  return function() {
+    var id = WORKER_IDS[workerId];
+    var cb = WORKER_CBS[workerId];
+    if (id) {
+      Runner.kill(id);
+    }
+    if (cb) {
+      cb();
+      console.log('Server timeout, killing', workerId);
+      delete WORKER_CBS[workerId];
+    }
+    delete WORKER_TIMEOUTS[workerId];
+  };
 }
 
 function generateWorkerSettings(browser, testId, role, workerId) {

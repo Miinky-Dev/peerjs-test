@@ -31,7 +31,10 @@ function saveTestData(id, data, cb) {
 }
 
 function end(workerId, msg) {
-  clearTimeout(testTimeout); if (TEST_ID && msg) {
+  end = function(){};
+  // Ensure end only runs once
+  clearTimeout(testTimeout);
+  if (TEST_ID && msg) {
     console.log(msg);
     saveTestData(TEST_ID, {ended: msg});
   }
