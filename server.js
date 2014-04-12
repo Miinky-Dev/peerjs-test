@@ -33,7 +33,10 @@ app.post('/end', function(req, res) {
   if (id) {
     Runner.kill(id);
     var cb = WORKER_CBS[workerId];
-    if (cb) {cb()};
+    if (cb) {
+      delete WORKER_CBS[workerId];
+      cb()
+    };
   } else {
     console.log('Got end request without valid workerId', req.body.workerId);
   }
@@ -59,14 +62,14 @@ app.listen(PORT);
 
 // Browsers to test
 var BROWSERS = [
-  {"os":"Windows","os_version":"8.1","browser":"chrome","device":null,"browser_version":"23.0"},
+  //{"os":"Windows","os_version":"8.1","browser":"chrome","device":null,"browser_version":"23.0"},
   {"os":"Windows","os_version":"8.1","browser":"chrome","device":null,"browser_version":"27.0"},
-  {"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"22.0"},
-  {"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"24.0"},
-  {"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"27.0"}
+  //{"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"22.0"},
+  //{"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"24.0"},
+  //{"os":"Windows","os_version":"8.1","browser":"firefox","device":null,"browser_version":"27.0"}
 ];
 
-var URL = 'http://url.com'
+var URL = 'http://peerjs.com:9002'
 
 // Map of our workerIds to BrowserStack ids
 var WORKER_IDS = {};
