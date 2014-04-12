@@ -113,11 +113,11 @@ function startMirror() {
             async.parallel({
               client: function(endCb) {
                 WORKER_CBS[clientId] = endCb;
-                WORKER_TIMEOUTS[clientId] = setTimeout(timeout(clientId), 12000);
+                WORKER_TIMEOUTS[clientId] = setTimeout(timeout(clientId), 60000);
               },
               host: function(endCb){
                 WORKER_CBS[hostId] = endCb;
-                WORKER_TIMEOUTS[hostId] = setTimeout(timeout(hostId), 12000);
+                WORKER_TIMEOUTS[hostId] = setTimeout(timeout(hostId), 60000);
               }
             }, function(){
               // Test is done!
@@ -145,8 +145,8 @@ function timeout(workerId) {
       Runner.kill(id);
     }
     if (cb) {
-      cb();
       console.log('Server timeout, killing', workerId);
+      cb();
       delete WORKER_CBS[workerId];
     }
     delete WORKER_TIMEOUTS[workerId];
