@@ -75,7 +75,8 @@ var WORKER_TIMEOUTS = {};
 
 function startMirror() {
   async.eachLimit(BROWSERS, 1, function(browser, eachCb){
-    db.data.findOne({'client.setting': settingString(browser), 'host.setting': settingString(browser)}, function(err, data) {
+    var clientBrowser = serverBrowser = browser;
+    db.data.findOne({'client.setting': clientBrowser, 'host.setting': serverBrowser}, function(err, data) {
       if (data) {
         return eachCb();
       } else {
@@ -85,15 +86,15 @@ function startMirror() {
           var testId = guid();
 
           var clientId = guid();
-          var clientSetting = generateWorkerSettings(browser, testId, 'client', clientId);
+          var clientSetting = generateWorkerSettings(clientBrowser, testId, 'client', clientId);
           var hostId = guid();
-          var hostSetting = generateWorkerSettings(browser, testId, 'host', hostId);
+          var hostSetting = generateWorkerSettings(serverBrowser, testId, 'host', hostId);
 
           console.log('====== Starting new test:', JSON.stringify(browser));
           db.data.insert({
             testId: testId,
-            client: {setting: clientSetting},
-            host: {setting: hostSetting}
+            client: {setting: clientBrowser},
+            host: {setting: serverBrowser}
           });
 
           async.parallel([
@@ -159,9 +160,6 @@ function generateWorkerSettings(browser, testId, role, workerId) {
   return setting;
 }
 
-function settingString(browser) {
-  return browser.os + ' ' + browser.browser + ' ' + browser.version;
-}
 
 function guid () {
   function s4 () {
