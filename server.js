@@ -96,20 +96,20 @@ function startMirror() {
             host: {setting: hostSetting}
           });
 
-          async.parallel({
-            client: function(pCb){
-              Runner.start(clientSetting, pCb);
-            },
-            host: function(pCb){
+          async.parallel([
+            function(pCb){
               Runner.start(hostSetting, pCb);
+            },
+            function(pCb){
+              Runner.start(clientSetting, pCb);
             }
-          }, function(err, results) {
+          ], function(err, results) {
             if (err) {
               eachCb('Failed to start clients ' + err.toString());
             }
             console.log('Clients started');
-            WORKER_IDS[clientId] = results.client.id;
-            WORKER_IDS[hostId] = results.host.id;
+            WORKER_IDS[clientId] = results[1].id;
+            WORKER_IDS[hostId] = results[0].id;
             async.parallel({
               client: function(endCb) {
                 WORKER_CBS[clientId] = endCb;

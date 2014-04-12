@@ -21,5 +21,6 @@ var roles = {
 var peer;
 function init () {
   peer = new Peer(TEST_ID + '-' + ROLE, {key: 'lwjd5qra8257b9', debug: true});
+  peer.on('error', console.log);
   roles[ROLE]();
 }
