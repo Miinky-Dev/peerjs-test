@@ -16,7 +16,7 @@ function testDataClient(cb) {
     conn.emit('data-'+data.toString());
   });
   conn.on('open', function(){
-    console.log('Conn openned');
+    console.log('Conn opened');
     async.eachSeries(TEST_DATA, function(msg, eachCb){
       conn.on('data-'+msg.toString(), function(){
         eachCb();
