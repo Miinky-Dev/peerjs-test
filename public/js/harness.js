@@ -1,3 +1,11 @@
+var LOG_FUNC = console.log.bind(console);
+var logData = [];
+console.log = function(){
+  args = Array.prototype.slice(arguments);
+  logData.push(args);
+  LOG_FUNC(LOG_FUNC.apply(null, args);
+};
+
 var CDN = 'http://cdn.peerjs.com';
 var FILE = 'peer.js';
 
@@ -34,9 +42,9 @@ function end(workerId, msg) {
   end = function(){};
   // Ensure end only runs once
   clearTimeout(testTimeout);
-  if (TEST_ID && msg) {
+  if (TEST_ID) {
     console.log(msg);
-    saveTestData(TEST_ID, {ended: msg});
+    saveTestData(TEST_ID, {ended: msg, log: logData});
   }
   post('/end', {workerId: workerId, msg: msg}, noop);
 }
