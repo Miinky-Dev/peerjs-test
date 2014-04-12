@@ -1,8 +1,6 @@
 var BrowserStack = require( "browserstack" );
-var client = BrowserStack.createClient({
-    username: "ericzhang4",
-    password: "VXkpz7bCJPemzMph7kFi"
-});
+var keys = JSON.parse(require('fs').readFileSync('./keys'));
+var client = BrowserStack.createClient(keys);
 
 var async = require('async');
 
