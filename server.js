@@ -159,12 +159,12 @@ function timeout(workerId) {
 
 function generateWorkerSettings(browser, testId, role, workerId) {
   setting = extend(true, {}, browser);
-  setting.url = URL + '/static/test.html?TEST_ID=' + testId + '&ROLE=' + role + '&WORKER_ID=' + workerId;
+  setting.url = URL + '/static/test.html?TEST_ID=' + testId + '&ROLE=' + role + '&WORKER_ID=' + workerId + '&PEERJS_VERSION=' + browser.peerJSVersion;
   return setting;
 }
 
 function browserString(browser) {
-  return browser.os + ' ' + browser.browser + ' ' + browser.browser_version;
+  return browser.os + ' ' + browser.browser + ' ' + browser.browser_version + ' peer.js v' + browser.peerJSVersion;
 }
 
 

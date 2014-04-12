@@ -5,14 +5,16 @@
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "27.0"
+      "browser_version": "27.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "28.0"
+      "browser_version": "28.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -21,14 +23,16 @@
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "31.0"
+      "browser_version": "31.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "32.0"
+      "browser_version": "32.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -37,14 +41,16 @@
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "33.0"
+      "browser_version": "33.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "firefox",
       "device": null,
-      "browser_version": "27.0"
+      "browser_version": "27.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -53,14 +59,16 @@
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "23.0"
+      "browser_version": "23.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "23.0"
+      "browser_version": "23.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -69,14 +77,16 @@
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "24.0"
+      "browser_version": "24.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "24.0"
+      "browser_version": "24.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -85,14 +95,16 @@
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "28.0"
+      "browser_version": "28.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "28.0"
+      "browser_version": "28.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -101,14 +113,16 @@
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "31.0"
+      "browser_version": "31.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "31.0"
+      "browser_version": "31.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -117,14 +131,16 @@
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "32.0"
+      "browser_version": "32.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "32.0"
+      "browser_version": "32.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -133,46 +149,16 @@
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "27.0"
+      "browser_version": "27.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "chrome",
       "device": null,
-      "browser_version": "27.0"
-    }
-  },
-  {
-    "client": {
-      "os": "Windows",
-      "os_version": "8.1",
-      "browser": "firefox",
-      "device": null,
-      "browser_version": "22.0"
-    },
-    "host": {
-      "os": "Windows",
-      "os_version": "8.1",
-      "browser": "firefox",
-      "device": null,
-      "browser_version": "22.0"
-    }
-  },
-  {
-    "client": {
-      "os": "Windows",
-      "os_version": "8.1",
-      "browser": "firefox",
-      "device": null,
-      "browser_version": "24.0"
-    },
-    "host": {
-      "os": "Windows",
-      "os_version": "8.1",
-      "browser": "firefox",
-      "device": null,
-      "browser_version": "24.0"
+      "browser_version": "27.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -181,14 +167,16 @@
       "os_version": "8.1",
       "browser": "firefox",
       "device": null,
-      "browser_version": "25.0"
+      "browser_version": "22.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "firefox",
       "device": null,
-      "browser_version": "25.0"
+      "browser_version": "22.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -197,14 +185,16 @@
       "os_version": "8.1",
       "browser": "firefox",
       "device": null,
-      "browser_version": "26.0"
+      "browser_version": "24.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "firefox",
       "device": null,
-      "browser_version": "26.0"
+      "browser_version": "24.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -213,14 +203,52 @@
       "os_version": "8.1",
       "browser": "firefox",
       "device": null,
-      "browser_version": "27.0"
+      "browser_version": "25.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "Windows",
       "os_version": "8.1",
       "browser": "firefox",
       "device": null,
-      "browser_version": "27.0"
+      "browser_version": "25.0",
+      "peerJSVersion": "0.3"
+    }
+  },
+  {
+    "client": {
+      "os": "Windows",
+      "os_version": "8.1",
+      "browser": "firefox",
+      "device": null,
+      "browser_version": "26.0",
+      "peerJSVersion": "0.3"
+    },
+    "host": {
+      "os": "Windows",
+      "os_version": "8.1",
+      "browser": "firefox",
+      "device": null,
+      "browser_version": "26.0",
+      "peerJSVersion": "0.3"
+    }
+  },
+  {
+    "client": {
+      "os": "Windows",
+      "os_version": "8.1",
+      "browser": "firefox",
+      "device": null,
+      "browser_version": "27.0",
+      "peerJSVersion": "0.3"
+    },
+    "host": {
+      "os": "Windows",
+      "os_version": "8.1",
+      "browser": "firefox",
+      "device": null,
+      "browser_version": "27.0",
+      "peerJSVersion": "0.3"
     }
   },
   {
@@ -229,14 +257,16 @@
       "device": null,
       "os_version": "Lion",
       "browser": "opera",
-      "browser_version": "20.0"
+      "browser_version": "20.0",
+      "peerJSVersion": "0.3"
     },
     "host": {
       "os": "OS X",
       "device": null,
       "os_version": "Lion",
       "browser": "opera",
-      "browser_version": "20.0"
+      "browser_version": "20.0",
+      "peerJSVersion": "0.3"
     }
   }
 ]
