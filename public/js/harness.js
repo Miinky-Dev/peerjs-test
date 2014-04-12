@@ -43,7 +43,7 @@ var queryData = getQueryData();
 
 var WORKER_ID = queryData.WORKER_ID;
 var TEST_ID = queryData.TEST_ID;
-var ROLE = queryData.ROLE;
+var ROLE = queryData.ROLE; // 'client' or 'host'
 var PEERJS_VERSION = queryData.PEERJS_VERSION || '0';
 
 if (!WORKER_ID) {
