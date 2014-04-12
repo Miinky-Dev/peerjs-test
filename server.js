@@ -75,7 +75,7 @@ var WORKER_TIMEOUTS = {};
 
 function startMirror() {
   async.each(BROWSERS, 1, function(browser, eachCb){
-    var clientBrowser browser.client;
+    var clientBrowser = browser.client;
     var hostBrowser = browser.host;
     db.data.findOne({'client.setting': clientBrowser, 'host.setting': hostBrowser}, function(err, data) {
       if (data) {
