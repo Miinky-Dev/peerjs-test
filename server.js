@@ -124,8 +124,8 @@ function startMirror() {
               }
             }, function(){
               // Test is done!
-              eachCb();
               console.log('========== Finished test:', JSON.stringify(browser));
+              eachCb();
             });
           });
         });
