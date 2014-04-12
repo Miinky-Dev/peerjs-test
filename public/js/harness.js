@@ -1,9 +1,7 @@
-var LOG_FUNC = console.log.bind(console);
 var logData = [];
 console.log = function(){
-  args = Array.prototype.slice(arguments);
-  logData.push(args);
-  LOG_FUNC(LOG_FUNC.apply(null, args);
+  args = Array.prototype.slice.call(arguments, 0);
+  logData.push(args.join(' '));
 };
 
 var CDN = 'http://cdn.peerjs.com';
