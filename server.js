@@ -75,7 +75,7 @@ var WORKER_TIMEOUTS = {};
 
 function startMirror() {
   async.eachLimit(BROWSERS, 1, function(browser, eachCb){
-    db.data.findOne({'client.setting': browser, 'host.setting': browser}, function(err, data) {
+    db.data.findOne({'client.setting': settingString(browser), 'host.setting': settingString(browser)}, function(err, data) {
       if (data) {
         return eachCb();
       } else {
@@ -159,6 +159,9 @@ function generateWorkerSettings(browser, testId, role, workerId) {
   return setting;
 }
 
+function settingString(browser) {
+  return browser.os + ' ' + browser.browser + ' ' + browser.version;
+}
 
 function guid () {
   function s4 () {
