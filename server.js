@@ -139,7 +139,7 @@ function startMirror(version) {
       clientBrowser.peerjsVersion = version;
     }
 
-    db.data.findOne({'client.setting': clientBrowser, 'host.setting': hostBrowser}, function(err, data) {
+    db.data.findOne({'client.setting': clientBrowser, 'host.setting': hostBrowser, version: version}, function(err, data) {
       if (data && !argv.force) {
         return eachCb();
       } else {
@@ -166,6 +166,7 @@ function startMirror(version) {
           db.data.insert({
             created: Date.now(),
             testId: testId,
+            version: version, // This is the "default version" these tests are attributed to.
             client: {
               setting: clientBrowser
             },
