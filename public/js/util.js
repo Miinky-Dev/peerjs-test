@@ -10,11 +10,11 @@ var q = async.queue(function (task, callback) {
   });
 }, 1);
 
-function post (url, data, cb) {
+function post(url, data, cb) {
   q.push({url: url, data: data, cb: cb});
 }
 
-function _post (url, data, cb) {
+function _post(url, data, cb) {
   var oReq = new XMLHttpRequest();
   oReq.onload = function(){
     var data;
@@ -33,7 +33,7 @@ function _post (url, data, cb) {
   oReq.send(JSON.stringify(data));
 }
 
-function get (url, cb) {
+function get(url, cb) {
   var oReq = new XMLHttpRequest();
   oReq.onload = function(){
     var data;
@@ -124,4 +124,4 @@ function browserInfo() {
   return {name: browserName, fullVersion: fullVersion, majorVersion: majorVersion};
 };
 
-function noop (){}
+function noop() {}
