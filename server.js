@@ -153,7 +153,7 @@ function startTestsForVersion(version) {
     if (!hostBrowser.peerjsVersion) {
       hostBrowser.peerjsVersion = version;
     }
-    startTestsForBrowsers(version, clientBrowser, hostBrowser);
+    startTestsForBrowsers(version, clientBrowser, hostBrowser, eachCb);
   }, function(err){
     if (err) {
       console.log('[BAD] Tests failed to run:', err);
@@ -163,7 +163,7 @@ function startTestsForVersion(version) {
   });
 }
 
-function startTestsForBrowsers(version, clientBrowser, hostBrowser) {
+function startTestsForBrowsers(version, clientBrowser, hostBrowser, cb) {
   var query = {
     'client.setting': clientBrowser,
     'host.setting': hostBrowser,
@@ -172,7 +172,7 @@ function startTestsForBrowsers(version, clientBrowser, hostBrowser) {
   db.data.findOne(query, function(err, data) {
     // Rerun tests that had no result.
     if (data && data.results && !argv.force) {
-      return eachCb();
+      return cb();
     } else {
       Runner.killAll(function(){
         // Generate a test ID.
@@ -233,7 +233,7 @@ function startTestsForBrowsers(version, clientBrowser, hostBrowser) {
           }
         ], function(err, results) {
           if (err) {
-            return eachCb('[BAD] Failed to start clients ' + err.toString());
+            return cb('[BAD] Failed to start clients ' + err.toString());
           }
 
           console.log('[...] Clients started');
@@ -252,7 +252,7 @@ function startTestsForBrowsers(version, clientBrowser, hostBrowser) {
           }, function(){
             // Test is done!
             console.log('[FINISH]', browserLog);
-            eachCb();
+            cb();
           });
         });
       });
