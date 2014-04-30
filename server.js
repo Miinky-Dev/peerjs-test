@@ -171,7 +171,7 @@ function startTestsForBrowsers(version, clientBrowser, hostBrowser, cb) {
   };
   db.data.findOne(query, function(err, data) {
     // Rerun tests that had no result.
-    if (data && data.results && !argv.force) {
+    if (data && data.result && !argv.force) {
       return cb();
     } else {
       Runner.killAll(function(){
