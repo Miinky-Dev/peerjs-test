@@ -13,6 +13,10 @@ var argv = require('optimist')
   .argv;
 
 var PORT = process.env.PORT || argv.port;
+var PEERJS_HOST = 'cdn.peerjs.com';
+var PEERJS_PATH = '/0.3/peer.js';
+var VERSION_REGEX = / build:(\d\.\d\.\d), /g;
+var http = require('http');
 
 var express = require('express');
 var app = express();
@@ -118,17 +122,17 @@ app.get('/browsers', function(req, res) {
   });
 });
 
+// TODO: endpoint for running tests on a certain revision. Should die early if
+// invalid revision/doesn't load, etc.
+
 app.listen(PORT);
 console.log('[INFO] Now listening on port:', PORT);
 
 
 // Start tests
 
-function startMirror(version) {
-  if (!version) {
-    // TODO: Figure it out.
-  }
-
+function startTestsForVersion(version) {
+  console.log('[INFO] Starting tests for version:', version);
   async.eachSeries(BROWSERS, function(browser, eachCb){
     var clientBrowser = browser.client;
     var hostBrowser = browser.host;
@@ -136,7 +140,7 @@ function startMirror(version) {
       clientBrowser.peerjsVersion = version;
     }
     if (!hostBrowser.peerjsVersion) {
-      clientBrowser.peerjsVersion = version;
+      hostBrowser.peerjsVersion = version;
     }
 
     db.data.findOne({'client.setting': clientBrowser, 'host.setting': hostBrowser, version: version}, function(err, data) {
@@ -144,7 +148,6 @@ function startMirror(version) {
         return eachCb();
       } else {
         Runner.killAll(function(){
-
           // Generate a test ID.
           var testId = guid();
 
@@ -190,8 +193,9 @@ function startMirror(version) {
             }
 
             console.log('[...] Clients started');
-            WORKER_IDS[clientId] = results[1].id;
             WORKER_IDS[hostId] = results[0].id;
+            WORKER_IDS[clientId] = results[1].id;
+
             async.parallel({
               client: function(endCb) {
                 WORKER_CBS[clientId] = endCb;
@@ -201,7 +205,6 @@ function startMirror(version) {
                 WORKER_CBS[hostId] = endCb;
                 WORKER_TIMEOUTS[hostId] = setTimeout(timeout(hostId), 60000);
               }
-
             }, function(){
               // Test is done!
               console.log('[FINISH]', browserLog);
@@ -236,6 +239,31 @@ function timeout(workerId) {
   };
 }
 
+function startTests(version) {
+  if (!version) {
+    var getOptions = {
+      host: PEERJS_HOST,
+      path: PEERJS_PATH
+    };
+
+    http.get(getOptions, function(res) {
+      res.setEncoding('utf8');
+      var version, match;
+      res.on('data', function (chunk) {
+        if (!version && (match = VERSION_REGEX.exec(chunk))) {
+          version = match[1];
+          console.log('[INFO] Found version from latest build on CDN:', version);
+          startTestsForVersion(version);
+        }
+      });
+    }).on('error', function(e) {
+      console.log("[INFO] When retrieving version, got error: " + e.message);
+    });
+  } else {
+    startTestsForVersion(version);
+  }
+}
+
 function generateWorkerSettings(browser, testId, role, workerId) {
   setting = extend(true, {}, browser);
   setting.url = URL + '/static/test.html?TEST_ID=' + testId + '&ROLE=' + role + '&WORKER_ID=' + workerId + '&PEERJS_VERSION=' + browser.peerjsVersion;
@@ -258,4 +286,4 @@ function guid() {
     + s4();
 }
 
-startMirror(argv.version);
+startTests(argv.version);

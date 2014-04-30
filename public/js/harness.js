@@ -76,7 +76,7 @@ loadScript(PEERJS_VERSION, function(err){
     console.log('Script loaded');
     saveTestData(TEST_ID, {
       browser: browserInfo(),
-      peerJSVersion: PEERJS_VERSION
+      peerjsVersion: PEERJS_VERSION
     });
     init();
   }

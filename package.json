@@ -21,6 +21,7 @@
     "nedb": "^0.10.5",
     "browserstack": "^1.0.1",
     "extend": "^1.2.1",
-    "async": "~0.7.0"
+    "async": "~0.7.0",
+    "optimist": "~0.6.1"
   }
 }
