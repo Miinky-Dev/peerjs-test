@@ -153,7 +153,7 @@ function startTestsForVersion(version) {
     if (!hostBrowser.peerjsVersion) {
       hostBrowser.peerjsVersion = version;
     }
-    startTestsForBrowsers(clientBrowser, hostBrowser);
+    startTestsForBrowsers(version, clientBrowser, hostBrowser);
   }, function(err){
     if (err) {
       console.log('[BAD] Tests failed to run:', err);
@@ -163,7 +163,7 @@ function startTestsForVersion(version) {
   });
 }
 
-function startTestsForBrowsers(clientBrowser, hostBrowser) {
+function startTestsForBrowsers(version, clientBrowser, hostBrowser) {
   var query = {
     'client.setting': clientBrowser,
     'host.setting': hostBrowser,
