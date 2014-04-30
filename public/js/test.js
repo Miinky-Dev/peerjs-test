@@ -1,18 +1,18 @@
 
 var roles = {
-  host: function host () {
+  host: function host() {
     async.series({
       data: testDataHost,
     }, function(err, results){
-      saveTestData(TEST_ID, {results: results});
+      saveTestResult(TEST_ID, results);
       end(WORKER_ID, 'success');
     });
   },
-  client: function client () {
+  client: function client() {
     async.series({
       data: testDataClient,
     }, function(err, results){
-      saveTestData(TEST_ID, {results: results});
+      saveTestResult(TEST_ID, results);
       end(WORKER_ID, 'success');
     });
   }

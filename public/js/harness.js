@@ -36,6 +36,10 @@ function saveTestData(id, data, cb) {
   post('/save', out, cb);
 }
 
+function saveTestResult(id, result) {
+  post('/save', {result: result, resultRole: ROLE, testId: id}, noop);
+}
+
 function end(workerId, msg) {
   end = function(){};
   // Ensure end only runs once

@@ -48,9 +48,20 @@ app.use(express.json());
 app.use('/static', express.static(__dirname + '/public'));
 
 app.post('/save', function(req, res) {
-  db.data.findOne({testId: req.body.testId}, function(err, doc){
+  var data = req.body;
+  db.data.findOne({testId: data.testId}, function(err, doc){
     if (doc) {
-      db.data.update({testId: req.body.testId}, extend(true, doc, req.body))
+      if (data.resultRole) {
+        // Check if a result previously called back and was different.
+        // TODO: this needs to change when A/V testing is added.
+        if (doc.result && data.result && doc.result !== data.result) {
+          console.log('[BAD]', data.resultRole, 'called back with:',
+            data.result, 'but we previously received a conflicting result:',
+            doc.result);
+        }
+        delete data.resultRole;
+      }
+      db.data.update({testId: data.testId}, extend(true, doc, data))
     }
   });
   res.send(200);
@@ -142,30 +153,62 @@ function startTestsForVersion(version) {
     if (!hostBrowser.peerjsVersion) {
       hostBrowser.peerjsVersion = version;
     }
+    startTestsForBrowsers(clientBrowser, hostBrowser);
+  }, function(err){
+    if (err) {
+      console.log('[BAD] Tests failed to run:', err);
+    } else {
+      console.log('[DONE] Tests completed.');
+    }
+  });
+}
 
-    db.data.findOne({'client.setting': clientBrowser, 'host.setting': hostBrowser, version: version}, function(err, data) {
-      if (data && !argv.force) {
-        return eachCb();
-      } else {
-        Runner.killAll(function(){
-          // Generate a test ID.
-          var testId = guid();
+function startTestsForBrowsers(clientBrowser, hostBrowser) {
+  var query = {
+    'client.setting': clientBrowser,
+    'host.setting': hostBrowser,
+    version: version
+  };
+  db.data.findOne(query, function(err, data) {
+    // Rerun tests that had no result.
+    if (data && data.results && !argv.force) {
+      return eachCb();
+    } else {
+      Runner.killAll(function(){
+        // Generate a test ID.
+        var testId = guid();
 
-          // Generate client, host IDs and settings.
-          var clientId = guid();
-          var clientSetting = generateWorkerSettings(clientBrowser, testId, 'client', clientId);
-          var hostId = guid();
-          var hostSetting = generateWorkerSettings(hostBrowser, testId, 'host', hostId);
-          var browserLog = browserString(clientBrowser) + ' connecting to ' + browserString(hostBrowser);
+        // Generate client, host IDs and settings.
+        var clientId = guid();
+        var clientSetting = generateWorkerSettings(clientBrowser, testId, 'client', clientId);
+        var hostId = guid();
+        var hostSetting = generateWorkerSettings(hostBrowser, testId, 'host', hostId);
+        var browserLog = browserString(clientBrowser) + ' connecting to ' + browserString(hostBrowser);
 
-          var logPrefix;
-          if (data && argv.force) {
-            logPrefix = '[FORCE START]';
-          } else {
-            logPrefix = '[START]';
-          }
-          console.log(logPrefix, browserLog);
+        var logPrefix;
+        if (data && argv.force) {
+          logPrefix = '[FORCE START]';
+        } else {
+          logPrefix = '[START]';
+        }
+        console.log(logPrefix, browserLog);
 
+        if (data) {
+          // Overwrite!
+          db.data.update(query, {
+            created: Date.now(),
+            testId: testId,
+            version: version, // This is the "default version" these tests are attributed to.
+            client: {
+              setting: clientBrowser
+            },
+            host: {
+              setting: hostBrowser
+            },
+            // Save one previous run when rerunning.
+            previousRun: data
+          });
+        } else {
           db.data.insert({
             created: Date.now(),
             testId: testId,
@@ -177,48 +220,42 @@ function startTestsForVersion(version) {
               setting: hostBrowser
             }
           });
+        }
 
-          async.parallel([
-            function(pCb){
-              Runner.start(hostSetting, pCb);
+        async.parallel([
+          function(pCb){
+            Runner.start(hostSetting, pCb);
+          },
+          function(pCb){
+            setTimeout(function(){
+              Runner.start(clientSetting, pCb);
+            }, 1000);
+          }
+        ], function(err, results) {
+          if (err) {
+            return eachCb('[BAD] Failed to start clients ' + err.toString());
+          }
+
+          console.log('[...] Clients started');
+          WORKER_IDS[hostId] = results[0].id;
+          WORKER_IDS[clientId] = results[1].id;
+
+          async.parallel({
+            client: function(endCb) {
+              WORKER_CBS[clientId] = endCb;
+              WORKER_TIMEOUTS[clientId] = setTimeout(timeout(clientId), 60000);
             },
-            function(pCb){
-              setTimeout(function(){
-                Runner.start(clientSetting, pCb);
-              }, 1000);
+            host: function(endCb){
+              WORKER_CBS[hostId] = endCb;
+              WORKER_TIMEOUTS[hostId] = setTimeout(timeout(hostId), 60000);
             }
-          ], function(err, results) {
-            if (err) {
-              return eachCb('[BAD] Failed to start clients ' + err.toString());
-            }
-
-            console.log('[...] Clients started');
-            WORKER_IDS[hostId] = results[0].id;
-            WORKER_IDS[clientId] = results[1].id;
-
-            async.parallel({
-              client: function(endCb) {
-                WORKER_CBS[clientId] = endCb;
-                WORKER_TIMEOUTS[clientId] = setTimeout(timeout(clientId), 60000);
-              },
-              host: function(endCb){
-                WORKER_CBS[hostId] = endCb;
-                WORKER_TIMEOUTS[hostId] = setTimeout(timeout(hostId), 60000);
-              }
-            }, function(){
-              // Test is done!
-              console.log('[FINISH]', browserLog);
-              eachCb();
-            });
+          }, function(){
+            // Test is done!
+            console.log('[FINISH]', browserLog);
+            eachCb();
           });
         });
-      }
-    });
-  }, function(err){
-    if (err) {
-      console.log('[BAD] Tests failed to run:', err);
-    } else {
-      console.log('[DONE] Tests completed.');
+      });
     }
   });
 }

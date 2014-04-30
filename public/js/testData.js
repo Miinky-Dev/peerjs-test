@@ -13,12 +13,12 @@ function testDataClient(cb) {
   conn.on('data', function(data){
     // Piggyback off conn emitter
     console.log('Got', data)
-    conn.emit('data-'+data.toString());
+    conn.emit('data-' + data.toString());
   });
   conn.on('open', function(){
     console.log('Conn opened');
     async.eachSeries(TEST_DATA, function(msg, eachCb){
-      conn.on('data-'+msg.toString(), function(){
+      conn.on('data-' + msg.toString(), function(){
         eachCb();
       });
       console.log('Sending', msg)
