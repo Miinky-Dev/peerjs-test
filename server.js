@@ -54,7 +54,7 @@ app.post('/save', function(req, res) {
       if (data.resultRole) {
         // Check if a result previously called back and was different.
         // TODO: this needs to change when A/V testing is added.
-        if (doc.result && data.result && doc.result !== data.result) {
+        if (doc.result && data.result && doc.result.data !== data.result.data) {
           console.log('[BAD]', data.resultRole, 'called back with:',
             data.result, 'but we previously received a conflicting result:',
             doc.result);
