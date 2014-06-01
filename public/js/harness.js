@@ -58,6 +58,7 @@ var WORKER_ID = queryData.WORKER_ID;
 var TEST_ID = queryData.TEST_ID;
 var ROLE = queryData.ROLE; // 'client' or 'host'
 var PEERJS_VERSION = queryData.PEERJS_VERSION || '0';
+var PEERJS_REVISION = queryData.PEERJS_REVISION;
 
 if (!WORKER_ID) {
   // Shit

@@ -82,25 +82,29 @@ app.post('/end', function(req, res) {
       cb();
     }
   } else {
-    console.log('[BAD] Got end request without valid workerId', req.body.workerId);
+    console.log('[BAD] Got end request without valid workerId', req.body.workerId, WORKER_IDS);
   }
 });
 
 // Dump of all tests results.
 app.get('/dump', function(req, res) {
-  var version = req.query.version;
-  var query = {};
-  var message = '[INFO] Dumping all test results';
-  if (version) {
-    message += ' for v' + version;
-    query.version = version;
-  }
-  console.log(message + ' (IP: ' + req.connection.remoteAddress + ')');
+  var query = req.query;
+  function cb(data) {
+    var message = '[INFO] Dumping all test results for v';
+    message += query.version;
+    console.log(message + ' (IP: ' + req.connection.remoteAddress + ')');
 
-  db.data.find(query, function(err, data) {
     res.send(data);
-    console.log('[INFO] Dumped ' + data.length + ' tests.');
-  });
+  }
+
+  if (query.version) {
+    dump(query, cb);
+  } else {
+    withLatestVersion(function(version) {
+      query.version = version;
+      dump(query, cb);
+    });
+  }
 });
 
 // Latest test date.
@@ -122,7 +126,7 @@ app.get('/latest', function(req, res) {
     } else {
       res.send(data[0].created);
       console.log('[INFO] Last run:', data[0].created);
-    }
+   }
   });
 });
 
@@ -140,6 +144,13 @@ app.listen(PORT);
 console.log('[INFO] Now listening on port:', PORT);
 
 
+function dump(query, cb) {
+  db.data.find(query, function(err, data) {
+    console.log('[INFO] Dumped ' + data.length + ' tests.');
+    cb(data)
+  });
+}
+
 // Start tests
 
 function startTestsForVersion(version) {
@@ -153,7 +164,7 @@ function startTestsForVersion(version) {
     if (!hostBrowser.peerjsVersion) {
       hostBrowser.peerjsVersion = version;
     }
-    startTestsForBrowsers(version, clientBrowser, hostBrowser, eachCb);
+    startTestsForBrowsers(version, null, clientBrowser, hostBrowser, eachCb);
   }, function(err){
     if (err) {
       console.log('[BAD] Tests failed to run:', err);
@@ -163,11 +174,27 @@ function startTestsForVersion(version) {
   });
 }
 
-function startTestsForBrowsers(version, clientBrowser, hostBrowser, cb) {
+function startTestsForRevision(revision) {
+  console.log('[INFO] Starting tests for revision:', revision);
+  async.eachSeries(BROWSERS, function(browser, eachCb){
+    var clientBrowser = browser.client;
+    var hostBrowser = browser.host;
+    startTestsForBrowsers(null, revision, clientBrowser, hostBrowser, eachCb);
+  }, function(err){
+    if (err) {
+      console.log('[BAD] Tests failed to run:', err);
+    } else {
+      console.log('[DONE] Tests completed.');
+    }
+  });
+}
+
+function startTestsForBrowsers(version, revision, clientBrowser, hostBrowser, cb) {
   var query = {
     'client.setting': clientBrowser,
     'host.setting': hostBrowser,
-    version: version
+    version: version,
+    revision: revision
   };
   db.data.findOne(query, function(err, data) {
     // Rerun tests that had no result.
@@ -180,9 +207,9 @@ function startTestsForBrowsers(version, clientBrowser, hostBrowser, cb) {
 
         // Generate client, host IDs and settings.
         var clientId = guid();
-        var clientSetting = generateWorkerSettings(clientBrowser, testId, 'client', clientId);
+        var clientSetting = generateWorkerSettings(clientBrowser, testId, 'client', clientId, revision);
         var hostId = guid();
-        var hostSetting = generateWorkerSettings(hostBrowser, testId, 'host', hostId);
+        var hostSetting = generateWorkerSettings(hostBrowser, testId, 'host', hostId, revision);
         var browserLog = browserString(clientBrowser) + ' connecting to ' + browserString(hostBrowser);
 
         var logPrefix;
@@ -199,6 +226,7 @@ function startTestsForBrowsers(version, clientBrowser, hostBrowser, cb) {
             created: Date.now(),
             testId: testId,
             version: version, // This is the "default version" these tests are attributed to.
+            revision: revision,
             client: {
               setting: clientBrowser
             },
@@ -213,6 +241,7 @@ function startTestsForBrowsers(version, clientBrowser, hostBrowser, cb) {
             created: Date.now(),
             testId: testId,
             version: version, // This is the "default version" these tests are attributed to.
+            revision: revision,
             client: {
               setting: clientBrowser
             },
@@ -278,37 +307,44 @@ function timeout(workerId) {
 
 function startTests(version) {
   if (!version) {
-    var getOptions = {
-      host: PEERJS_HOST,
-      path: PEERJS_PATH
-    };
-
-    http.get(getOptions, function(res) {
-      res.setEncoding('utf8');
-      var version, match;
-      res.on('data', function (chunk) {
-        if (!version && (match = VERSION_REGEX.exec(chunk))) {
-          version = match[1];
-          console.log('[INFO] Found version from latest build on CDN:', version);
-          startTestsForVersion(version);
-        }
-      });
-    }).on('error', function(e) {
-      console.log("[INFO] When retrieving version, got error: " + e.message);
+    withLatestVersion(function(version) {
+      console.log('[INFO] Found version from latest build on CDN:', version);
+      startTestsForVersion(version);
     });
   } else {
     startTestsForVersion(version);
   }
 }
 
-function generateWorkerSettings(browser, testId, role, workerId) {
+// TODO: Support revisions as well? Perhaps use tags?
+function withLatestVersion(cb) {
+  var getOptions = {
+    host: PEERJS_HOST,
+    path: PEERJS_PATH
+  };
+
+  http.get(getOptions, function(res) {
+    res.setEncoding('utf8');
+    var version, match;
+    res.on('data', function (chunk) {
+      if (!version && (match = VERSION_REGEX.exec(chunk))) {
+        version = match[1];
+        cb(version);
+      }
+    });
+  }).on('error', function(e) {
+    console.log("[INFO] When retrieving version, got error: " + e.message);
+  });
+}
+
+function generateWorkerSettings(browser, testId, role, workerId, revision) {
   setting = extend(true, {}, browser);
-  setting.url = URL + '/static/test.html?TEST_ID=' + testId + '&ROLE=' + role + '&WORKER_ID=' + workerId + '&PEERJS_VERSION=' + browser.peerjsVersion;
+  setting.url = URL + '/static/test.html?TEST_ID=' + testId + '&ROLE=' + role + '&WORKER_ID=' + workerId + '&PEERJS_VERSION=' + (browser.peerjsVersion ? '&PEERJS_VERSION=' + browser.peerjsVersion : '&PEERJS_REVISION=' + revision);
   return setting;
 }
 
 function browserString(browser) {
-  return browser.os + ' ' + browser.browser + ' ' + browser.browser_version + ' peer.js v' + browser.peerjsVersion;
+  return browser.os + ' ' + browser.browser + ' ' + browser.browser_version + ' peer.js v' + (browser.peerjsVersion || 'DEVELOPMENT');
 }
 
 
